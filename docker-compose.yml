@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  app:
+    build: .
+    environment:
+      DB_PASSWORD: forge
+      DB_HOST: rbm30_db_1
+      REDIS_HOST: rbm30_redis_1
+    volumes:
+      - app:/var/www/html
+
+  nginx:
+    depends_on:
+      - app
+    build:
+      context: ./nginx/
+    ports:
+      - 21000:20000
+    volumes:
+      - app:/var/www/html
+
+  db:
+    build:
+      context: ./database/
+    environment:
+      MYSQL_DATABASE: forge
+      MYSQL_USER: forge
+      MYSQL_PASSWORD: forge
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+
+  redis:
+    build:
+      context: ./config/
+
+volumes:
+  app: {}
