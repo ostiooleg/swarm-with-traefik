@@ -2,25 +2,28 @@ version: "3"
 
 services:
   app:
+    image: dkr-30-voting_app
     build: .
     environment:
       DB_PASSWORD: forge
-      DB_HOST: rbm30_db_1
-      REDIS_HOST: rbm30_redis_1
+      DB_HOST: rbm30_db
+      REDIS_HOST: rbm30_redis
     volumes:
       - app:/var/www/html
 
   nginx:
+    image: dkr-30-voting_nginx
     depends_on:
       - app
     build:
       context: ./nginx/
     ports:
-      - 21000:20000
+      - 8080:20000
     volumes:
       - app:/var/www/html
 
   db:
+    image: dkr-30-voting_db
     build:
       context: ./database/
     environment:
@@ -30,6 +33,7 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
 
   redis:
+    image: dkr-30-voting_redis
     build:
       context: ./config/
 
