@@ -1,4 +1,4 @@
-version: "3"
+version: "3.3"
 
 services:
   app:
@@ -17,10 +17,30 @@ services:
       - app
     build:
       context: ./nginx/
-    ports:
-      - 8080:20000
     volumes:
       - app:/var/www/html
+    networks:
+      - traefik-public
+      - default
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.rbm30_nginx.rule=Host(`app.143.244.164.208.nip.io`, `app.143.244.163.8.nip.io`, `app.143.244.163.39.nip.io`)
+        - traefik.http.routers.rbm30_nginx.entrypoints=http
+        - traefik.http.routers.rbm30_nginx.service=app
+        - traefik.http.services.app.loadbalancer.server.port=80
+
+        - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+        - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
+
+
+        - traefik.http.routers.rbm30_nginx_https.rule=Host(`app.143.244.164.208.nip.io`, `app.143.244.163.8.nip.io`, `app.143.244.163.39.nip.io`)
+        - traefik.http.routers.rbm30_nginx_https.entrypoints=https
+        - traefik.http.routers.rbm30_nginx_https.service=app_https
+        - traefik.http.services.app_https.loadbalancer.server.port=80
+        - traefik.http.routers.rbm30_nginx_https.tls.certresolver=le # <== Defining certsresolvers for https
+        - traefik.docker.network=traefik-public
 
   db:
     image: dkr-30-voting_db
@@ -39,3 +59,9 @@ services:
 
 volumes:
   app: {}
+
+networks:
+  traefik-public:
+    external: true
+  default:
+    external: false
