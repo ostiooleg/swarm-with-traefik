@@ -23,10 +23,15 @@ services:
       - traefik-public
       - default
     deploy:
+      placement:
+        constraints:
+          # Make the traefik service run only on the node with this label
+          # as the node with it has the volume for the certificates
+          - node.labels.role == manager
       labels:
         - traefik.enable=true
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.rbm30_nginx.rule=Host(`app.143.244.164.208.nip.io`, `app.143.244.163.8.nip.io`, `app.143.244.163.39.nip.io`)
+        - traefik.http.routers.rbm30_nginx.rule=Host(`app.134.209.213.149.nip.io`, `app.165.22.9.191.nip.io`, `app.157.230.63.57.nip.io`)
         - traefik.http.routers.rbm30_nginx.entrypoints=http
         - traefik.http.routers.rbm30_nginx.service=app
         - traefik.http.services.app.loadbalancer.server.port=80
@@ -35,7 +40,7 @@ services:
         - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
 
 
-        - traefik.http.routers.rbm30_nginx_https.rule=Host(`app.143.244.164.208.nip.io`, `app.143.244.163.8.nip.io`, `app.143.244.163.39.nip.io`)
+        - traefik.http.routers.rbm30_nginx_https.rule=Host(`app.134.209.213.149.nip.io`, `app.165.22.9.191.nip.io`, `app.157.230.63.57.nip.io`)
         - traefik.http.routers.rbm30_nginx_https.entrypoints=https
         - traefik.http.routers.rbm30_nginx_https.service=app_https
         - traefik.http.services.app_https.loadbalancer.server.port=80
