@@ -11,11 +11,11 @@ services:
       # Listen on port 443, default for HTTPS
       - 443:443
     deploy:
-      placement:
-        constraints:
+#      placement:
+#        constraints:
           # Make the traefik service run only on the node with this label
           # as the node with it has the volume for the certificates
-          - node.labels.role == manager
+#          - node.labels.role == manager
       labels:
         # Enable Traefik for this service, to make it available in the public network
         - traefik.enable=true

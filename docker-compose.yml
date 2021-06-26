@@ -23,15 +23,15 @@ services:
       - traefik-public
       - default
     deploy:
-      placement:
-        constraints:
+#      placement:
+#        constraints:
           # Make the traefik service run only on the node with this label
           # as the node with it has the volume for the certificates
-          - node.labels.role == manager
+#          - node.labels.role == manager
       labels:
         - traefik.enable=true
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.rbm30_nginx.rule=Host(`app.134.209.213.149.nip.io`, `app.165.22.9.191.nip.io`, `app.157.230.63.57.nip.io`)
+        - traefik.http.routers.rbm30_nginx.rule=Host(`app.147.182.135.234.nip.io`, `app.147.182.143.21.nip.io`, `app.147.182.143.14.nip.io`)
         - traefik.http.routers.rbm30_nginx.entrypoints=http
         - traefik.http.routers.rbm30_nginx.service=app
         - traefik.http.services.app.loadbalancer.server.port=80
@@ -40,7 +40,7 @@ services:
         - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
 
 
-        - traefik.http.routers.rbm30_nginx_https.rule=Host(`app.134.209.213.149.nip.io`, `app.165.22.9.191.nip.io`, `app.157.230.63.57.nip.io`)
+        - traefik.http.routers.rbm30_nginx_https.rule=Host(`app.147.182.135.234.nip.io`, `app.147.182.143.21.nip.io`, `app.147.182.143.14.nip.io`)
         - traefik.http.routers.rbm30_nginx_https.entrypoints=https
         - traefik.http.routers.rbm30_nginx_https.service=app_https
         - traefik.http.services.app_https.loadbalancer.server.port=80
@@ -56,6 +56,8 @@ services:
       MYSQL_USER: forge
       MYSQL_PASSWORD: forge
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    volumes:
+      - /mnt/mysql:/var/lib/mysql
 
   redis:
     image: dkr-30-voting_redis
