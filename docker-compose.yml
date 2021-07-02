@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.4"
 
 services:
   app:
@@ -31,7 +31,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.rbm30_nginx.rule=Host(`app.147.182.135.234.nip.io`, `app.147.182.143.21.nip.io`, `app.147.182.143.14.nip.io`)
+        - traefik.http.routers.rbm30_nginx.rule=Host(`app.147.182.134.82.nip.io`, `app.147.182.164.228.nip.io`, `app.147.182.164.235.nip.io`)
         - traefik.http.routers.rbm30_nginx.entrypoints=http
         - traefik.http.routers.rbm30_nginx.service=app
         - traefik.http.services.app.loadbalancer.server.port=80
@@ -40,7 +40,7 @@ services:
         - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
 
 
-        - traefik.http.routers.rbm30_nginx_https.rule=Host(`app.147.182.135.234.nip.io`, `app.147.182.143.21.nip.io`, `app.147.182.143.14.nip.io`)
+        - traefik.http.routers.rbm30_nginx_https.rule=Host(`app.147.182.134.82.nip.io`, `app.147.182.164.228.nip.io`, `app.147.182.164.235.nip.io`)
         - traefik.http.routers.rbm30_nginx_https.entrypoints=https
         - traefik.http.routers.rbm30_nginx_https.service=app_https
         - traefik.http.services.app_https.loadbalancer.server.port=80
@@ -57,7 +57,7 @@ services:
       MYSQL_PASSWORD: forge
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
     volumes:
-      - /mnt/mysql:/var/lib/mysql
+      - vol1:/var/lib/mysql
 
   redis:
     image: dkr-30-voting_redis
@@ -66,6 +66,10 @@ services:
 
 volumes:
   app: {}
+  vol1:
+    driver: glusterfs:latest
+    name: "gfs"
+
 
 networks:
   traefik-public:
