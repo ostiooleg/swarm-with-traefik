@@ -1,0 +1,59 @@
+version: "3.4"
+
+services:
+
+  elasticsearch:
+    image: dkr-30-voting_elasticsearch
+    build:
+      context: ./elasticsearch/
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+    volumes:
+      - vol2:/var/lib/elasticsearch
+
+  kibana:
+    depends_on:
+      - elasticsearch
+    image: dkr-30-voting_kibana
+    build:
+      context: ./kibana/
+    ports:
+      - 5601:5601
+    labels:
+      - "traefik.enable=true"
+      - traefik.constraint-label=traefik-public
+      - "traefik.protocol=http"
+      - "traefik.port=5601"
+      - traefik.frontend.rule=Host(`kibana.147.182.173.154.nip.io`)
+      - traefik.docker.network=traefik-public
+    # Using the environment variables USERNAME and HASHED_PASSWORD
+      - traefik.http.middlewares.admin-auth.basicauth.users=${USERNAME_KIBANA?Variable not set}:${HASHED_PASSWORD_KIBANA?Variable not set}
+    networks:
+      # Use the public network created to be shared between Traefik and
+      # any other service that needs to be publicly available with HTTPS
+      - traefik-public
+
+  fluentd:
+    depends_on:
+      - elasticsearch
+    image: dkr-30-voting_fluentd
+    build:
+      context: ./fluentd/
+    volumes:
+      - ./fluentd/conf:/fluentd/etc
+    ports:
+      - 24224:24224
+      - 24224:24224/udp
+
+volumes:
+  vol2:
+    driver: glusterfs:latest
+    name: "gfs"
+
+networks:
+  # Use the previously created public network "traefik-public", shared with other
+  # services that need to be publicly available via this Traefik
+  traefik-public:
+    external: true

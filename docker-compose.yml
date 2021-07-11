@@ -2,6 +2,8 @@ version: "3.4"
 
 services:
   app:
+    depends_on:
+      - fluentd
     image: dkr-30-voting_app
     build: .
     environment:
@@ -10,11 +12,17 @@ services:
       REDIS_HOST: rbm30_redis
     volumes:
       - app:/var/www/html
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+
 
   nginx:
     image: dkr-30-voting_nginx
     depends_on:
       - app
+      - fluentd
     build:
       context: ./nginx/
     volumes:
@@ -31,7 +39,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.rbm30_nginx.rule=Host(`app.147.182.134.82.nip.io`, `app.147.182.164.228.nip.io`, `app.147.182.164.235.nip.io`)
+        - traefik.http.routers.rbm30_nginx.rule=Host(`app.147.182.173.154.nip.io`, `app.47.182.180.100.nip.io`, `app.147.182.167.185.nip.io`)
         - traefik.http.routers.rbm30_nginx.entrypoints=http
         - traefik.http.routers.rbm30_nginx.service=app
         - traefik.http.services.app.loadbalancer.server.port=80
@@ -40,15 +48,23 @@ services:
         - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
 
 
-        - traefik.http.routers.rbm30_nginx_https.rule=Host(`app.147.182.134.82.nip.io`, `app.147.182.164.228.nip.io`, `app.147.182.164.235.nip.io`)
+        - traefik.http.routers.rbm30_nginx_https.rule=Host(`app.147.182.173.154.nip.io`, `app.47.182.180.100.nip.io`, `app.147.182.167.185.nip.io`)
         - traefik.http.routers.rbm30_nginx_https.entrypoints=https
         - traefik.http.routers.rbm30_nginx_https.service=app_https
         - traefik.http.services.app_https.loadbalancer.server.port=80
         - traefik.http.routers.rbm30_nginx_https.tls.certresolver=le # <== Defining certsresolvers for https
         - traefik.docker.network=traefik-public
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: nginx.access
+
 
   db:
     image: dkr-30-voting_db
+    depends_on:
+      - fluentd
     build:
       context: ./database/
     environment:
@@ -58,11 +74,23 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
     volumes:
       - vol1:/var/lib/mysql
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+
 
   redis:
     image: dkr-30-voting_redis
+    depends_on:
+      - fluentd
     build:
       context: ./config/
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+
 
 volumes:
   app: {}
