@@ -11,7 +11,7 @@ services:
     ports:
       - 9200:9200
     volumes:
-      - vol2:/var/lib/elasticsearch
+      - vol2:/usr/share/elasticsearch
     networks:
       # Use the public network created to be shared between Traefik and
       # any other service that needs to be publicly available with HTTPS
@@ -61,7 +61,7 @@ services:
 volumes:
   vol2:
     driver: glusterfs:latest
-    name: "gfs"
+    name: "gfs-elastic"
 
 networks:
   # Use the previously created public network "traefik-public", shared with other
