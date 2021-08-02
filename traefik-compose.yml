@@ -77,9 +77,13 @@ services:
       # Use the TLS Challenge for Let's Encrypt
       - --certificatesresolvers.le.acme.tlschallenge=true
       # Enable the access log, with HTTP requests
-      - --accesslog
+      - --accesslog=true
       # Enable the Traefik log, for configurations and errors
-      - --log
+      - --log=true
+      - --metrics=true
+      - --metrics.prometheus=true
+      - --tracing=true
+      - --tracing.jaeger=true
       # Enable the Dashboard and API
       - --api
     networks:

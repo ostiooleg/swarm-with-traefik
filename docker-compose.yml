@@ -37,20 +37,21 @@ services:
       labels:
         - traefik.enable=true
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.rbm30_nginx.rule=Host(`app.147.182.184.106.nip.io`, `app.67.205.144.9.nip.io`, `app.147.182.186.151.nip.io`)
+        - traefik.http.routers.rbm30_nginx.rule=Host(`app.143.198.123.38.nip.io`, `app.143.198.165.153.nip.io`, `app.143.198.171.185.nip.io`)
         - traefik.http.routers.rbm30_nginx.entrypoints=http
         - traefik.http.routers.rbm30_nginx.service=app
         - traefik.http.services.app.loadbalancer.server.port=80
 
-        - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
-        - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
+        - traefik.http.routers.rbm30_nginx.middlewares=app-https-redirect
 
+        - traefik.http.middlewares.app-https-redirect.redirectscheme.scheme=https
+        - traefik.http.middlewares.app-https-redirect.redirectscheme.permanent=true
 
-        - traefik.http.routers.rbm30_nginx_https.rule=Host(`app.147.182.184.106.nip.io`, `app.67.205.144.9.nip.io`, `app.147.182.186.151.nip.io`)
-        - traefik.http.routers.rbm30_nginx_https.entrypoints=https
-        - traefik.http.routers.rbm30_nginx_https.service=app_https
+        - traefik.http.routers.rbm30_nginx-https.rule=Host(`app.143.198.123.38.nip.io`, `app.143.198.165.153.nip.io`, `app.143.198.171.185.nip.io`)
+        - traefik.http.routers.rbm30_nginx-https.entrypoints=https
+        - traefik.http.routers.rbm30_nginx-https.service=app_https
         - traefik.http.services.app_https.loadbalancer.server.port=80
-        - traefik.http.routers.rbm30_nginx_https.tls.certresolver=le # <== Defining certsresolvers for https
+        - traefik.http.routers.rbm30_nginx-https.tls.certresolver=le # <== Defining certsresolvers for https
         - traefik.docker.network=traefik-public
     logging:
       driver: fluentd
@@ -92,7 +93,7 @@ volumes:
   app: {}
   vol1:
     driver: glusterfs:latest
-    name: "gfs"
+    name: "mysql"
 
 
 networks:

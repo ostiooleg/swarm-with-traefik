@@ -30,13 +30,21 @@ services:
         - traefik.enable=true
         - traefik.constraint-label=traefik-public
         - traefik.protocol=http
-        - traefik.http.routers.rbm30_kibana.entrypoints=http
+        - traefik.http.routers.efk_kibana.entrypoints=http
         - traefik.http.services.kibana.loadbalancer.server.port=5601
-        - traefik.http.routers.rbm30_kibana.rule=Host(`kibana.147.182.184.106.nip.io`)
+        - traefik.http.routers.efk_kibana.rule=Host(`kibana.143.198.123.38.nip.io`)
         - traefik.docker.network=traefik-public
+
+        - traefik.http.routers.efk_kibana-https.rule=Host(`kibana.143.198.123.38.nip.io`)
+        - traefik.http.routers.efk_kibana-https.entrypoints=https
+        - traefik.http.routers.efk_kibana-https.tls=true
     # Using the environment variables USERNAME and HASHED_PASSWORD
         - traefik.http.middlewares.kibana-auth.basicauth.users=${USERNAME_KIBANA?Variable not set}:${HASHED_PASSWORD_KIBANA?Variable not set}
         - traefik.http.routers.rbm30_kibana.middlewares=kibana-auth
+
+        - traefik.http.middlewares.kibana-auth.redirectscheme.scheme=https
+        - traefik.http.middlewares.kibana-auth.redirectscheme.permanent=true
+
     networks:
       # Use the public network created to be shared between Traefik and
       # any other service that needs to be publicly available with HTTPS
@@ -61,7 +69,7 @@ services:
 volumes:
   vol2:
     driver: glusterfs:latest
-    name: "gfs-elastic"
+    name: "elastic"
 
 networks:
   # Use the previously created public network "traefik-public", shared with other
