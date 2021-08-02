@@ -40,10 +40,12 @@ services:
         - traefik.http.routers.efk_kibana-https.tls=true
     # Using the environment variables USERNAME and HASHED_PASSWORD
         - traefik.http.middlewares.kibana-auth.basicauth.users=${USERNAME_KIBANA?Variable not set}:${HASHED_PASSWORD_KIBANA?Variable not set}
-        - traefik.http.routers.rbm30_kibana.middlewares=kibana-auth
+        - traefik.http.routers.efk_kibana.middlewares=kibana-auth
+        - traefik.http.routers.efk_kibana-https.middlewares=kibana-auth
 
-        - traefik.http.middlewares.kibana-auth.redirectscheme.scheme=https
-        - traefik.http.middlewares.kibana-auth.redirectscheme.permanent=true
+#        - traefik.http.middlewares.kibana-auth.redirectscheme.scheme=https
+#        - traefik.http.middlewares.kibana-auth.redirectscheme.permanent=true
+
 
     networks:
       # Use the public network created to be shared between Traefik and
